@@ -1,7 +1,23 @@
 # Ignore all build folders for PicoW, Pico2W, and RISC_V
+
 build/
 
 pico-sdk/
+SP800-90B_EntropyAssessment/
 
-
+*.bin
 *Zone.Identifier
+.vscode/
+__pycache__/
+
+
+results/
+entropyResults/
+entropyDatasets/
+
+
+pico_sdk_import.cmake
+sequentialDataset.py
+uartPrint.py
+restartScript.py
+
