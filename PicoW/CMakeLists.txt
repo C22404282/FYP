@@ -22,10 +22,11 @@ file(GLOB MLKEM_SOURCES
     "../mlkem/src/fips202/*.c"
 )
 
-
 add_executable(entropy_restart_test entropy_restart_test.c)
 add_executable(entropy_sequential_test entropy_sequential_test.c)
 set(ALL_TARGETS entropy_restart_test entropy_sequential_test)
+
+
 
 set(MLKEM_LEVELS 512 768 1024)
 set(MLKEM_OPS all gen enc dec)
@@ -46,6 +47,16 @@ foreach(LEVEL ${MLKEM_LEVELS})
             MLK_CONFIG_PARAMETER_SET=${LEVEL} 
             PICO_STACK_SIZE=0x8000 
         )
+        if(DEFINED ITERATION_COUNT)
+            target_compile_definitions(${TARGET_NAME} PRIVATE
+                ITERATION_COUNT=${ITERATION_COUNT}
+            )
+        endif()
+        if(DEFINED BASELINE_AVERAGE_FREQ)
+            target_compile_definitions(${TARGET_NAME} PRIVATE
+                BASELINE_AVERAGE_FREQ=${BASELINE_AVERAGE_FREQ}
+            )
+        endif()
 
         #Use custom linker where stack_dummy lives in RAM
         pico_add_linker_script_override_path(${TARGET_NAME} ${CMAKE_CURRENT_LIST_DIR})
@@ -78,4 +89,7 @@ foreach(TARGET_NAME ${ALL_TARGETS})
     pico_add_extra_outputs(${TARGET_NAME})
 endforeach()
 
+#Unset to remove from next builds
+#unset(ITERATION_COUNT CACHE)
+#unset(BASELINE_AVERAGE_FREQ CACHE)
 

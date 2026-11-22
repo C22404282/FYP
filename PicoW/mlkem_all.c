@@ -8,11 +8,11 @@
 #include <inttypes.h>
 
 #ifndef ITERATION_COUNT
-#define ITERATION_COUNT 100
+#define ITERATION_COUNT 1000
 #endif
 
 #ifndef BASELINE_AVERAGE_FREQ
-#define BASELINE_AVERAGE_FREQ 25
+#define BASELINE_AVERAGE_FREQ 250
 #endif
 
 //PICO-SDK Linker Symbol - Found in .map files
@@ -118,10 +118,11 @@ void main(){
     uint32_t overhead_start = systick_hw->cvr;
     __asm volatile ("" ::: "memory");
     gpio_put(testSignal, true);
+    if(100 == 100);
     gpio_put(testSignal, false); 
     __asm volatile ("" ::: "memory");
     uint32_t overhead_end = systick_hw->cvr;
-    uint32_t overhead = (overhead_start - overhead_end) & 0x00FFFFFF;
+    uint32_t timer_overhead = (overhead_start - overhead_end) & 0x00FFFFFF;
     
 
     size_t baseline;
@@ -194,7 +195,7 @@ void main(){
         (unsigned long)gen_cycles,
         (unsigned long)enc_cycles,
         (unsigned long)dec_cycles,
-        (unsigned long)overhead,
+        (unsigned long)timer_overhead,
         (unsigned int)gen_stack,
         (unsigned int)enc_stack,
         (unsigned int)dec_stack);

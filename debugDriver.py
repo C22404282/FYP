@@ -14,5 +14,5 @@ class DebugPort:
             "-f", "target/rp2040.cfg",
             "-c", "adapter speed 5000",
             "-c", f"program {elf_file} verify reset exit"
-        ], check=True)
+        ], check=True,capture_output=True)
     

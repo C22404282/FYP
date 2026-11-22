@@ -110,13 +110,15 @@ void main(){
     uint32_t empty_start = systick_hw->cvr;
     __asm volatile ("" ::: "memory");
     gpio_put(testSignal, true);
+    if(100 == 100);
     gpio_put(testSignal, false);
     __asm volatile ("" ::: "memory");
     uint32_t empty_end = systick_hw->cvr;
-    uint32_t overhead = (empty_start - empty_end) & 0x00FFFFFF;
+    uint32_t timer_overhead = (empty_start - empty_end) & 0x00FFFFFF;
     
 
     size_t baseline;
+    static char json_buffer[256];
     for(uint16_t i = 0;i < ITERATION_COUNT;i++){
         paint_stack();
         baseline = max_stack_used();
@@ -133,15 +135,19 @@ void main(){
         uint32_t gen_cycles = (gen_start - systick_hw->cvr) & 0x00FFFFFF;
         size_t gen_stack = max_stack_used() - baseline;
 
-        
-        printf("{%" PRIu32 ",%" PRIu32 "}\n", gen_cycles, overhead);
+        //SEND RESULTS OVER UART IN JSON FORMAT
+        snprintf(json_buffer, sizeof(json_buffer),"{\"gen_cycles\":%lu,\"overhead\":%lu,\"gen_stack\":%u}\n",
+        (unsigned long)gen_cycles,
+        (unsigned long)timer_overhead,
+        (unsigned int)gen_stack);
+
+        uart_puts(uart0, json_buffer);
 
         if((i % BASELINE_AVERAGE_FREQ) == 0){
             gpio_put(baselineSignal, true);
-            busy_wait_us_32(15);
+            busy_wait_us_32(150000);
             gpio_put(baselineSignal, false);
         }
-        
     }
     return;
 }

@@ -96,12 +96,6 @@ void main(){
     uart_init(uart0, 115200);
     gpio_set_function(0, GPIO_FUNC_UART);
 
-    // uint8_t publicKey[MLKEM512_PUBLICKEYBYTES];
-    // uint8_t secretKey[MLKEM512_SECRETKEYBYTES];
-    // uint8_t cipherText[MLKEM512_CIPHERTEXTBYTES];
-    // uint8_t shared_secret_sender[MLKEM512_BYTES];
-    // uint8_t shared_secret_recv[MLKEM512_BYTES];
-
 
     uint8_t publicKey[MLKEM_PUBLICKEYBYTES(MLK_CONFIG_PARAMETER_SET)];
     uint8_t secretKey[MLKEM_SECRETKEYBYTES(MLK_CONFIG_PARAMETER_SET)];
@@ -113,6 +107,7 @@ void main(){
     uint32_t empty_start = systick_hw->cvr;
     __asm volatile ("" ::: "memory");
     gpio_put(testSignal, true);
+    if(100 == 100);
     gpio_put(testSignal, false);
     __asm volatile ("" ::: "memory");
     uint32_t empty_end = systick_hw->cvr;
@@ -124,7 +119,7 @@ void main(){
 
 
     size_t baseline;
-
+    static char json_buffer[256];
 
     for(uint16_t i = 0;i < ITERATION_COUNT;i++){
         paint_stack();
@@ -141,12 +136,18 @@ void main(){
         __asm volatile ("" ::: "memory");
         uint32_t dec_cycles = (dec_start - systick_hw->cvr) & 0x00FFFFFF;
         size_t dec_stack = max_stack_used() - baseline;
-        printf("{%" PRIu32 ",%" PRIu32 "}\n", dec_cycles, timer_overhead);
 
+        //SEND RESULTS OVER UART IN JSON FORMAT
+        snprintf(json_buffer, sizeof(json_buffer),"{\"dec_cycles\":%lu,\"overhead\":%lu,\"dec_stack\":%u}\n",
+        (unsigned long)dec_cycles,
+        (unsigned long)timer_overhead,
+        (unsigned int)dec_stack);
+
+        uart_puts(uart0, json_buffer);
 
         if((i % BASELINE_AVERAGE_FREQ) == 0){
             gpio_put(baselineSignal, true);
-            busy_wait_us_32(15);
+            busy_wait_us_32(150000); //150ms
             gpio_put(baselineSignal, false);
         }
         

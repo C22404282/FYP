@@ -1,0 +1,17 @@
+{
+    "algorithm": "ML-KEM-768",
+    "iterations": 1000,
+    "baseline_freq": 2500,
+    "gen": {
+        "avg_cycles": 1776992.463,
+        "stackUsage": 13936
+    },
+    "enc": {
+        "avg_cycles": 2039583.876,
+        "stackUsage": 17088
+    },
+    "dec": {
+        "avg_cycles": 2496360.089,
+        "stackUsage": 18152
+    }
+}

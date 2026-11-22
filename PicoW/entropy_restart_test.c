@@ -9,22 +9,19 @@
 
 void configure_rosc() {
 
-    // Then enable the ROSC with MEDIUM range in one write
+    //Set to medium range first
     rosc_write(&rosc_hw->ctrl, 
         (ROSC_CTRL_ENABLE_VALUE_ENABLE << ROSC_CTRL_ENABLE_LSB) | 
         ROSC_CTRL_FREQ_RANGE_VALUE_MEDIUM);
-
+    //Set to high range next
     rosc_write(&rosc_hw->ctrl, 
         (ROSC_CTRL_ENABLE_VALUE_ENABLE << ROSC_CTRL_ENABLE_LSB) | 
         ROSC_CTRL_FREQ_RANGE_VALUE_HIGH);
 
     rosc_write(&rosc_hw->freqa,
-        (0x9696 << 16) |   // Password
-        (0x1 << 7)     |   // DS1_RANDOM = 1 (RP2350 only)
-        (0x1 << 3)     |   // DS0_RANDOM = 1 (RP2350 only)
-        (0x1 << 0));       // DS0 = double drive
+    (0x9696 << 16) |   // Password
+    (0x1 << 0));       // DS0 = double drive
 
-    // FREQB: set stage 4 (DS4) to double drive (0x1)
     rosc_write(&rosc_hw->freqb,
         (0x9696 << 16) |   // Password
         (0x1 << 0));       // DS4 = double drive
@@ -53,17 +50,17 @@ int randombytes(uint8_t *out, size_t outlen) {
 
 
 int main() {
-        
+    configure_rosc();
+
     uint8_t randomBytes[125];
     randombytes(randomBytes,125);
 
     //Initialize UART
     uart_init(uart0, 115200);
     gpio_set_function(0, GPIO_FUNC_UART);
-    sleep_ms(5);
+    //sleep_ms(5);
 
     uart_write_blocking(uart0, randomBytes, 125);
-
     uart_tx_wait_blocking(uart0);
     return 0;
 }

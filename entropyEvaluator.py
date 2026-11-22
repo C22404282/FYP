@@ -11,12 +11,6 @@ import numpy as np
 
 
 
-PPK2_PORT = "COM12"
-VOLTAGE = 3.3
-UART_PORT = 'COM16'
-BAUD_RATE = 115200
-
-
 class entropyEvaluator:
     def __init__(self,targetBoard,ppk2_port,voltage,uart_port,baud_rate,buildFolder,entropyDatasetFolder,resultsFolder,NIST_PATH,BITS_PER_SAMPLE = 1):
         self.targetBoard = targetBoard
@@ -40,8 +34,8 @@ class entropyEvaluator:
             print("Voltage set above 5V - defaulting to 3.3V")
             self.VOLTAGE = 3.3
 
-        self.uart_init()
-        self.ppk2_init(self.PPK2_PORT)
+        # self.uart_init()
+        # self.ppk2_init(self.PPK2_PORT)
 
 
     def ppk2_init(self,PPK2_PORT):
@@ -180,7 +174,8 @@ class entropyEvaluator:
     def evaluate(self):
                 
         try:
-            
+            self.uart_init()
+            self.ppk2_init(self.PPK2_PORT)
             #Start Sequential Test First            
             success = self.runSequentialTest()
             if (success):
@@ -196,7 +191,12 @@ class entropyEvaluator:
                 
         except KeyboardInterrupt:
             print("Error")
+            self.uart.close()
+            self.ppk2.ser.close()
             return
+        except Exception:
+            self.uart.close()
+            self.ppk2.ser.close()
 
     def expandBinaryFiles(self):
         
@@ -243,7 +243,9 @@ class entropyEvaluator:
             print("EXIT CODE:", e.returncode)
             print("STDOUT:\n", e.stdout)
             print("STDERR:\n", e.stderr)
-
+        except Exception:
+            self.ppk2.ser.close()
+            self.uart.close()
         try:
             print("Calculating H_min")
             restart_result = subprocess.run(
@@ -266,24 +268,30 @@ class entropyEvaluator:
             print("EXIT CODE:", e.returncode)
             print("STDOUT:\n", e.stdout)
             print("STDERR:\n", e.stderr)
+        except Exception:
+            self.ppk2.ser.close()
+            self.uart.close()
+        finally:
+            self.ppk2.ser.close()
+            self.uart.close()
         
 
 
 
 
-build = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\build"
-result = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\entropyResults"
-entropyData = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\entropyDatasets"
-nistPath = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP/SP800-90B_EntropyAssessment/cpp"
-nistPath = nistPath.replace("\\","/")
+# build = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\build"
+# result = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\entropyResults"
+# entropyData = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\entropyDatasets"
+# nistPath = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP/SP800-90B_EntropyAssessment/cpp"
+# nistPath = nistPath.replace("\\","/")
 
-eval = entropyEvaluator("PicoW","COM12",3.3,"COM16",115200,build,entropyData,result,nistPath)
-# eval.SEQ_OUTPUT_FILE_ORIG = eval.ENTROPYFOLDER + "/" + eval.targetBoard + "_seq_dataset_orig.bin"
-# eval.SEQ_OUTPUT_FILE_ORIG = eval.SEQ_OUTPUT_FILE_ORIG.replace("\\", "/")
-# eval.RESTART_OUTPUT_FILE_ORIG = eval.ENTROPYFOLDER + "/" + eval.targetBoard + "_restart_matrix_orig.bin"
-# eval.RESTART_OUTPUT_FILE_ORIG = eval.RESTART_OUTPUT_FILE_ORIG.replace("\\", "/")
+# eval = entropyEvaluator("PicoW","COM12",3.3,"COM16",115200,build,entropyData,result,nistPath)
+# # eval.SEQ_OUTPUT_FILE_ORIG = eval.ENTROPYFOLDER + "/" + eval.targetBoard + "_seq_dataset_orig.bin"
+# # eval.SEQ_OUTPUT_FILE_ORIG = eval.SEQ_OUTPUT_FILE_ORIG.replace("\\", "/")
+# # eval.RESTART_OUTPUT_FILE_ORIG = eval.ENTROPYFOLDER + "/" + eval.targetBoard + "_restart_matrix_orig.bin"
+# # eval.RESTART_OUTPUT_FILE_ORIG = eval.RESTART_OUTPUT_FILE_ORIG.replace("\\", "/")
 
-eval.runNIST()
+# eval.runNIST()
 
 
 
