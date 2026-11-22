@@ -8,6 +8,7 @@ class DebugPort:
         return
     
     def programBoard(self,elf_file):
+        #Hardcoded to program PicoW - Will be be extended for other boards
         subprocess.run([
             "openocd",
             "-f", "interface/cmsis-dap.cfg",

@@ -166,33 +166,10 @@ class mlkemEvaluator:
 
             if count != iterationCount or freq != baselineFreq:
                 print("IterationCount/baseline freq dont match compiled versions -- RECOMPILING")
-                #print("Prev",count)
-                #print("Passed",iterationCount)
-                #print("Prev",freq)
-                #print("Passed",baselineFreq)
-
-
                 compileFlags = []
                 compileFlags.append(f"-DITERATION_COUNT={iterationCount}")
                 compileFlags.append(f"-DBASELINE_AVERAGE_FREQ={baselineFreq}")
                 self.reCompile(compileFlags)
-
-            # print("count",count)
-            # print("freq",freq)
-            # compileFlags = []
-            # if iterationCount != 1000:
-            #     compileFlags.append(f"-DITERATION_COUNT={iterationCount}")
-            # if baselineFreq != 250:
-            #     compileFlags.append(f"-DBASELINE_AVERAGE_FREQ={baselineFreq}")
-            # if len(compileFlags):
-            #     
-            # else:
-            #     count = self.get_cmake_var("ITERATION_COUNT")
-            #     freq = self.get_cmake_var("BASELINE_AVERAGE_FREQ")
-
-            #     print("count",count)
-            #     print("freq",freq)
-
 
             #print(elf_path)
             
@@ -233,24 +210,16 @@ class mlkemEvaluator:
             for i in range(iterationCount):
                 raw_bytes = self.uart.readline()  # Read until /n
                 bytes = raw_bytes.decode("utf-8").strip()
-                #print("--------")
-                #print(i)
-                #print("--------\n")
-                #print(bytes)
                 data = json.loads(bytes)
-                #print(metrics['gen']['cycles'])
-                #print(data['gen_cycles'])
+
 
                 if operation != "All":
                     opCycles = operation + "_cycles"
                     metrics[operation]['cycles'].append(data[opCycles] - data['overhead'])
-
-
                 else:
                     metrics['gen']['cycles'].append(data['gen_cycles'] - data['overhead'])
                     metrics['enc']['cycles'].append(data['enc_cycles'] - data['overhead'])
                     metrics['dec']['cycles'].append(data['dec_cycles'] - data['overhead'])
-                    
 
                 #Only execute once as stack use doesnt change
                 if i == 1:

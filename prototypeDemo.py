@@ -2,13 +2,10 @@ from entropyEvaluator import entropyEvaluator
 from mlkem_evaluator import mlkemEvaluator
 import numpy as np
 
-PPK2_PORT = "COM12"
-VOLTAGE = 3.3
-UART_PORT = 'COM16'
-BAUD_RATE = 115200
 
 
-build = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\build"
+
+buildFolder = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\build"
 
 mlkem_result = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\mlkemResults"
 
@@ -18,11 +15,17 @@ entropy_result = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP\PicoW\entropyRe
 
 nist_path = r"\\wsl.localhost\Ubuntu\home\seanh\College\FYP/SP800-90B_EntropyAssessment/cpp"
 
+PPK2_PORT = "COM12"
+VOLTAGE = 3.3
+UART_PORT = 'COM16'
+BAUD_RATE = 115200
 
 targetBoard = "PicoW"
+mlkem_eval = mlkemEvaluator(targetBoard,PPK2_PORT,VOLTAGE,UART_PORT,BAUD_RATE,buildFolder,mlkem_result)
+mlkem_eval.evaluate(512,1000,2500,"All")
 
-mlkem_eval = mlkemEvaluator(targetBoard,PPK2_PORT,VOLTAGE,UART_PORT,BAUD_RATE,build,mlkem_result)
-#mlkem_eval.get_cmake_var("ITERATION_COUNT")
+
+
 
 
 mlkem512_avgCycles = {
