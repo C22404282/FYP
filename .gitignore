@@ -21,3 +21,8 @@ sequentialDataset.py
 uartPrint.py
 restartScript.py
 
+debug_ROSC_FREQ_CHECK.c
+entropyResults/
+mlkemResults/
+entropyDatasets/
+

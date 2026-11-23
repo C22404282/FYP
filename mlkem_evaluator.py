@@ -11,7 +11,7 @@ import subprocess
 
 
 class mlkemEvaluator:
-    def __init__(self,targetBoard,ppk2_port,voltage,uart_port,baud_rate,buildFolder,resultsFolder):
+    def __init__(self,ppk2_port,voltage,uart_port,buildFolder,resultsFolder,targetBoard='PicoW',baud_rate=115200):
         self.targetBoard = targetBoard
         self.PPK2_PORT = ppk2_port
         self.VOLTAGE = voltage

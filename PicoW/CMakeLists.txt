@@ -22,9 +22,17 @@ file(GLOB MLKEM_SOURCES
     "../mlkem/src/fips202/*.c"
 )
 
+
+
+
 add_executable(entropy_restart_test entropy_restart_test.c)
 add_executable(entropy_sequential_test entropy_sequential_test.c)
 set(ALL_TARGETS entropy_restart_test entropy_sequential_test)
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/debug_ROSC_FREQ_CHECK.c")
+    add_executable(debug_ROSC_FREQ_CHECK debug_ROSC_FREQ_CHECK.c)
+    list(APPEND ALL_TARGETS debug_ROSC_FREQ_CHECK)
+endif()
 
 
 

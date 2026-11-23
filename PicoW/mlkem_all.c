@@ -46,7 +46,6 @@ size_t max_stack_used(void) {
     while (unused_words < total_words && stack[unused_words] == KNOWN_PATTERN) {
         unused_words++;
     }
-
     size_t total_words_used = total_words - unused_words;
 
     //Multiply by 4 to convert to bytes
